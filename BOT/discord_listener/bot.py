@@ -59,7 +59,7 @@ async def on_ready():
         print(channel)
         print(channel.id)
 
-    channel = bot.get_channel(908505071887732768)
+    channel = bot.get_channel(665366942688870443)
     await channel.send('¡¡¡Sean bienvenidos a la Zona Safari!!!')
 
 
@@ -192,13 +192,11 @@ async def poke(ctx):
         await ctx.send(embed=e)
 
 
-@bot.command(name='add-pokemon', help='Permite añadir un nuevo pokemon al safari. Ejemplo: !add-pokemon aron url_imagen 50')
+@bot.command(name='add-pokemon', help='Permite añadir un nuevo pokemon al safari. Ejemplo: !add-pokemon aron')
 async def poke(ctx):
     message =  ctx.message.content
-    name = message.split(" ")
     print("send a new mesage to rabbitmq: "+message)
     channelMQ.basic_publish(exchange='cartero', routing_key="cola", body=message)
-    await ctx.send("Los datos de {nom} se han añadido a la Pokedex.".format(nom = name[1]))
 
 ############ CONSUMER ###############
 
@@ -224,22 +222,22 @@ def writer(bot):
     print(' [*] Waiting for messages. To exit press CTRL+C')
 
     async def write(message):
-        channel = bot.get_channel(908505071887732768)
-        message = message.split(' ')
-        
+        channel = bot.get_channel(665366942688870443)
+        message = message.split('*')
+        print(message)
         global pokemon
         global hp_actual
         global hp_maximo
         global cebo
 
-        pokemon = [message[0],message[1]]
-        hp_maximo = int(float(message[2]))
+        pokemon = [message[1],message[3]]
+        hp_maximo = int(float(message[4]))
         hp_actual = hp_maximo
         cebo = 0
-
-        e = discord.Embed(	title="¡Ha aparecido un {p} salvaje!".format(p = message[0]),
+        print(hp_maximo)
+        e = discord.Embed(	title=message[0] + message[1] + message[2],
                       		description="HP: {a}/{h}".format(a= hp_actual, h = hp_maximo))
-        e.set_thumbnail(url="{u}".format(u = message[1]))
+        e.set_thumbnail(url="{u}".format(u = pokemon[1]))
         await channel.send(embed=e)
 
     

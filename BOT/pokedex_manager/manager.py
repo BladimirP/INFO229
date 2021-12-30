@@ -3,6 +3,7 @@ import os, time
 import pika
 import create_database
 import random
+import pokepy
 
 print("start manager...")
 create_database.main()
@@ -63,7 +64,7 @@ def callback(ch, method, properties, body):
 		nivel = random.randint(5,15)
 		hp_max = (hp_max * nivel) / 10
 
-		result = ("{nom} {ima} {hp}".format(nom= nombre_pokemon, ima = imagen_pokemon, hp=hp_max))
+		result = ("¡Ha aparecido un *{nom}* salvaje!*{ima}*{hp}".format(nom= nombre_pokemon, ima = imagen_pokemon, hp=hp_max))
 		print(result)
 
 		########## PUBLICA EL RESULTADO COMO EVENTO EN RABBITMQ ##########
@@ -87,14 +88,25 @@ def callback(ch, method, properties, body):
 			channel.basic_publish(exchange='cartero',routing_key="discord_writer",body=result)
 
 	if (arguments[0]=="!add-pokemon"):
-		nombre = arguments[1]
-		imagen = arguments[2]
-		hp_base = arguments[3]
+		
+		#coneccion con API de pokemones
+		name = arguments[1]
+		pokemon = pokepy.V2Client().get_pokemon(name)
+		hp_base = pokemon[0].stats[0].base_stat
+		imagen = pokemon[0].sprites.front_default
+
 		db_connection = mysql.connector.connect(user=DATABASE_USER,host=DATABASE_IP,port=DATABASE_PORT, password=DATABASE_USER_PASSWORD)
 		cursor = db_connection.cursor()
 		cursor.execute(f"USE {DATABASE}")
-		cursor.execute(f'''INSERT INTO pokemon(nombre,image,HP) VALUES("{nombre}","{imagen}","{hp_base}");''')
+		cursor.execute(f'''INSERT INTO pokemon(nombre,image,HP) VALUES("{pokemon[0].name}","{imagen}","{hp_base}");''')
 		cursor.execute(f'''COMMIT;''')
+
+		result = ("¡Se ha agregado a *{nom}* a la zona safari!*{ima}*{hp}".format(nom= name, ima = imagen, hp = hp_base))
+		print(result)
+
+		########## PUBLICA EL RESULTADO COMO EVENTO EN RABBITMQ ##########
+		print("send a new message to rabbitmq: "+result)
+		channel.basic_publish(exchange='cartero',routing_key="discord_writer",body=result)
 
 
 channel.basic_consume(

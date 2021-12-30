@@ -3,6 +3,7 @@ RUN apt-get update && apt-get install --no-install-recommends --yes python3
 
 RUN pip install mysql.connector
 RUN pip install pika
+RUN pip install pokepy
 
 ENV PYTHONUNBUFFERED 1
 
