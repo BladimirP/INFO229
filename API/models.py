@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from .database import Base #Se importa el objeto Base desde el archivo database.py
+from .database import Base, SessionLocal #Se importa el objeto Base desde el archivo database.py
+
+db = SessionLocal()
 
 class New(Base): 
 

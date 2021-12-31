@@ -20,7 +20,7 @@ class Category(CategoryBase):
 
 
 class NewBase(BaseModel):
-    url: str
+    pass
 
 
 class NewCreate(NewBase):
@@ -30,6 +30,7 @@ class NewCreate(NewBase):
 class New(NewBase):
     id: int
     title: str
+    url: str
     date: str
     media_outlet: str
     categories: List[Category] = []

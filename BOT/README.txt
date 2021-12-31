@@ -4,7 +4,8 @@
 	https://www.youtube.com/watch?v=qGuuyym8Esg
 	
 -Remplaze la conexion de la API de youtube del trabajo por una
-conexion a pokepy, que es una API con la informacion de todos los pokemos.
+conexion a pokepy Documentacion < https://pokeapi.github.io/pokepy/ >
+, que es una API con la informacion de todos los pokemos.
 Esta permite agregar con !add-pokemon [nombre_pokemon] . A
 cualquiera de los 800 pokemones a la zona safari.
 
