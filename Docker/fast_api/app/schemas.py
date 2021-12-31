@@ -2,23 +2,6 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-
-class CategoryBase(BaseModel):
-    value: str
-
-
-class CategoryCreate(CategoryBase):
-    pass
-
-
-class Category(CategoryBase):
-    id: int
-    owner_id: int
-
-    class Config:
-        orm_mode = True
-
-
 class NewBase(BaseModel):
     pass
 
@@ -28,12 +11,12 @@ class NewCreate(NewBase):
 
 
 class New(NewBase):
-    id: int
+    id_news: int
     title: str
     url: str
     date: str
     media_outlet: str
-    categories: List[Category] = []
+    category: str
 
     class Config:
         orm_mode = True
